@@ -1,10 +1,10 @@
-package org.example;
+package org.example.trips;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Trip {
-    private String id;
+    private Long id;
     private String name;
     private String origin;
     private String destination;
@@ -13,7 +13,7 @@ public class Trip {
     public Trip() {
     }
 
-    public Trip(String id, String name, String origin, String destination, String date) {
+    public Trip(Long id, String name, String origin, String destination, String date) {
         this.id = id;
         this.name = name;
         this.origin = origin;
@@ -21,11 +21,11 @@ public class Trip {
         this.date = date;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
