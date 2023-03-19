@@ -1,24 +1,26 @@
-package javeriana.ms.multms.model;
+package javeriana.ms.calculator.model;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "add_info")
-public class MultInfo {
+@Table(name = "operations")
+public class Operations {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private String operation;
     private int num1;
     private int num2;
     private float answer;
     private String us;
     private String date;
 
-    public MultInfo() {
+    public Operations() {
     }
-
-    public MultInfo(int num1, int num2, float answer, String us, String date) {
+    
+    public Operations(String operation, int num1, int num2, float answer, String us, String date) {
+        this.operation = operation;
         this.num1 = num1;
         this.num2 = num2;
         this.answer = answer;
@@ -32,6 +34,14 @@ public class MultInfo {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
     }
 
     public int getNum1() {
@@ -76,6 +86,7 @@ public class MultInfo {
 
     @Override
     public String toString() {
-        return "AddInfo{" + "id = " + id + ", num1 = " + num1 + ", num2 = " + num2 + ", answer = " + answer + ", us = " + us + ", date = " + date + '}';
-    }
+        return "Operations{" + "id = " + id + ", num1 = " + num1 + ", num2 = " + num2 + ", answer = " + answer + ", us = " + us + ", date = " + date + '}';
+    }    
+    
 }
