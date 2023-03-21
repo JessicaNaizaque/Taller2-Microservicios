@@ -32,7 +32,7 @@ public class Main {
 
         // create new trip
         System.out.println("Create new trip:");
-        TripWithoutId newTrip = new TripWithoutId("New Trip", "Mexico City", "Miami", "2023-01-01");
+        TripWithoutId newTrip = new TripWithoutId("New Trip", "Mexico City", "Miami", "01/01/2023");
         Trip createdTrip = RestClient.createTrip(newTrip);
         System.out.println("Created trip: " + createdTrip);
         trips = RestClient.getAllTrips();
