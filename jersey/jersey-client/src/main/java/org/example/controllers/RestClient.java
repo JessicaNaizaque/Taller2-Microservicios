@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import jakarta.ws.rs.client.*;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.example.trips.Trip;
@@ -15,11 +16,12 @@ public class RestClient {
     private static final WebTarget target = client.target(SERVER_URI);
 
     public static List<Trip> getAllTrips() {
-        List<Trip> trips = new ArrayList<>();
+        List<Trip> trips = null;
         Invocation.Builder invocationBuilder = target.path("/trips/json").request(MediaType.APPLICATION_JSON);
         Response response = invocationBuilder.get();
         if (response.getStatus() == 200) {
-            trips = response.readEntity(List.class);
+            // response is a list of trips
+            trips = response.readEntity(new GenericType<>() {});
         }
         return trips;
     }
