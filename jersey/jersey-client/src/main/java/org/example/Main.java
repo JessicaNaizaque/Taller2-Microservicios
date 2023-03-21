@@ -14,27 +14,21 @@ public class Main {
         List<Trip> trips = RestClient.getAllTrips();
         System.out.println(trips);
 
-        // delete trip 1000
-        /*
-        System.out.println("Delete trip 1000:");
-        RestClient.deleteTrip(1000L);
+        // delete one trip
+        Trip trip = trips.get(trips.size() - 1);
+        System.out.println("Delete trip " + trip.getId() + ":");
+        RestClient.deleteTrip(trip.getId());
         trips = RestClient.getAllTrips();
         System.out.println(trips);
-        */
 
-        // print type of trips list
-        System.out.println("Type of trips list: " + trips.get(0).getClass());
-
-        // modify trip 1001 origin to "New York", destination to "Los Angeles"
-        System.out.println("Modify trip 1001:");
-        Trip trip1001 = trips.stream().filter(trip -> trip.getId() == 1001).findFirst().orElse(null);
-        if (trip1001 != null) {
-            TripWithoutId tripWithoutId = new TripWithoutId(trip1001.getName(), "New York", "Los Angeles", trip1001.getDate());
-            Trip updatedTrip = RestClient.updateTrip(1001L, tripWithoutId);
-            System.out.println("Updated trip: " + updatedTrip);
-            trips = RestClient.getAllTrips();
-            System.out.println(trips);
-        }
+        // modify one trip's origin to "New York", destination to "Los Angeles"
+        trip = trips.get(0);
+        System.out.println("Modify trip " + trip.getId() + ":");
+        TripWithoutId tripWithoutId = new TripWithoutId(trip.getName(), "New York", "Los Angeles", trip.getDate());
+        Trip updatedTrip = RestClient.updateTrip(trip.getId(), tripWithoutId);
+        System.out.println("Updated trip: " + updatedTrip);
+        trips = RestClient.getAllTrips();
+        System.out.println(trips);
 
         // create new trip
         System.out.println("Create new trip:");
