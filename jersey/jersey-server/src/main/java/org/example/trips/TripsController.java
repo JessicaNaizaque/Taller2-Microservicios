@@ -17,7 +17,7 @@ import jakarta.ws.rs.core.Response;
 public class TripsController {
 
     private final File file = new File("src/resources/trips.json");
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     private static List<Trip> trips;
     {
         try {
@@ -30,8 +30,12 @@ public class TripsController {
     @GET
     @Path("/json")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Trip> getTripsAsJson() {
-        return trips;
+    public Response getTripsAsJson() {
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(trips)
+                .build();
     }
 
     @GET
@@ -42,44 +46,59 @@ public class TripsController {
     }
 
     @DELETE
-    @Path("/delete")
-    public Response deleteTrip(@QueryParam("id") Long id) throws Exception{
+    @Path("/{id}")
+    public Response deleteTrip(@PathParam("id") Long id) throws Exception{
         trips = trips.stream().filter(trip -> !trip.getId().equals(id)).collect(Collectors.toList());
         objectMapper.writeValue(file, trips);
+
         return Response
-                .status(Response.Status.OK)
-                .entity("The trip with ID " + id + " was deleted successfully.")
+                .status(Response.Status.NO_CONTENT)
                 .build();
     }
 
     @PUT
-    @Path("/update/{id}")
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Trip updateName(@PathParam("id") Long id, @QueryParam("name") String name) throws Exception{
-        Trip modifiedTrip = new Trip();
-        for (int i = 0; i < trips.size(); i++){
-            if(trips.get(i).getId().equals(id)){
-                trips.get(i).setName(name);
-                modifiedTrip = trips.get(i);
+    public Response updateTrip(@PathParam("id") Long id, TripWithoutId updatedTrip) throws Exception{
+        Trip tripToUpdate = null;
+        for (Trip current: trips) {
+            if (current.getId().equals(id)) {
+                tripToUpdate = current;
+                break;
             }
         }
-        objectMapper.writeValue(file, trips);
-        return modifiedTrip;
+        if (tripToUpdate != null) {
+            tripToUpdate.setName(updatedTrip.getName());
+            tripToUpdate.setOrigin(updatedTrip.getOrigin());
+            tripToUpdate.setDestination(updatedTrip.getDestination());
+            tripToUpdate.setDate(updatedTrip.getDate());
+            objectMapper.writeValue(file, trips);
+
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(tripToUpdate)
+                    .build();
+        }
+        return Response
+                .status(Response.Status.BAD_REQUEST)
+                .entity("The trip with ID " + id + " was not found.")
+                .build();
     }
 
     @POST
-    @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addTrip(Trip trip)throws Exception{
-        boolean exist = false;
-        for (Trip current: trips){
-            if (trip.getId().equals(current.getId())){
-                exist = true;
-            }
-        }
-        if (!exist){
-            trips.add(trip);
-            objectMapper.writeValue(file, trips);
-        }
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addTrip(TripWithoutId newTrip) throws Exception {
+        // next id is the last id + 1
+        Long nextId = trips.get(trips.size() - 1).getId() + 1;
+        Trip trip = new Trip(nextId, newTrip.getName(), newTrip.getOrigin(), newTrip.getDestination(), newTrip.getDate());
+        trips.add(trip);
+        objectMapper.writeValue(file, trips);
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(trip)
+                .build();
     }
 }
